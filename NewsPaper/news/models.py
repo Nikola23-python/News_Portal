@@ -43,57 +43,29 @@ class Author(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name="Название категории"
-    )
+    name = models.CharField(max_length=100,unique=True,verbose_name="Название категории")
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
     def __str__(self):
-        return self.name
+        return self.name.title()
 
 
 class Post(models.Model):
     ARTICLE = 'AR'
     NEWS = 'NW'
-    POST_TYPES = [
-        (ARTICLE, 'Статья'),
-        (NEWS, 'Новость'),
-    ]
-
-    author = models.ForeignKey(
-        Author,
-        on_delete=models.CASCADE,
-        verbose_name="Автор"
-    )
-    post_type = models.CharField(
-        max_length=2,
-        choices=POST_TYPES,
-        verbose_name="Тип публикации"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата создания"
-    )
-    categories = models.ManyToManyField(
-        Category,
-        through='PostCategory',
-        verbose_name="Категории"
-    )
-    title = models.CharField(
-        max_length=200,
-        verbose_name="Заголовок"
-    )
+    POST_TYPES = [(ARTICLE, 'Статья'), (NEWS, 'Новость'),]
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name="Автор")
+    post_type = models.CharField(max_length=2, choices=POST_TYPES, verbose_name="Тип публикации")
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name="Дата создания")
+    categories = models.ManyToManyField(Category,through='PostCategory', verbose_name="Категории")
+    title = models.CharField(max_length=200,verbose_name="Заголовок")
     content = models.TextField(verbose_name="Содержание")
-    rating = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        verbose_name="Рейтинг"
-    )
+    rating = models.IntegerField(default=0,validators=[MinValueValidator(0)],verbose_name="Рейтинг")
+    def __str__(self):
+        return f'{self.title.title()}: {self.content[:20]}'
 
     class Meta:
         verbose_name = "Публикация"
