@@ -56,3 +56,8 @@ def currency(value, code='rub'):
    postfix = CURRENCIES_SYMBOLS[code]
    # Возвращаемое функцией значение подставится в шаблон.
    return f'{value} {postfix} '
+
+
+Интересная штука:
+<h3>{% current_time '%b %d %Y' %}</h3>
+   <h3> {{ info |default_if_none:"Только лучшие новости!" }} </h3>

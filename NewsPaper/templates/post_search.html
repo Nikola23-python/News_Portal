@@ -2,9 +2,13 @@
 
 {% load custom_filters %}
 {% load custom_tags %}
+
 {% block content %}
    <h1>Публикации</h1>
-   <h3>{% current_time '%b %d %Y' %}</h3>
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Найти" />
+   </form>
    <hr>
    {% if posts %}
        <table>
@@ -52,7 +56,3 @@
    {% endif %}
 
 {% endblock content %}
-
-
-
-
