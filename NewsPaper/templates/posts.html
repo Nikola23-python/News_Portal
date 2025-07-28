@@ -10,6 +10,7 @@
        <table>
            <tr>
                <td>Название</td>
+               <td>Тип</td>
                <td>Описание</td>
                <td>Категория</td>
                <td>Рейтинг</td>
@@ -18,6 +19,7 @@
            {% for post in posts %}
            <tr>
                <td>{{ post.title | censor }}</td>
+               <td>{{ post.post_type }}</td>
                <td>{{ post.content |truncatechars:20 | censor }}</td>
                <td>{% for category in post.categories.all %}
                     {{ category.name }}
