@@ -44,7 +44,7 @@ class PostCreate(CreateView):
     model = Post
     template_name = 'post_edit.html'
 
-class PostUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
