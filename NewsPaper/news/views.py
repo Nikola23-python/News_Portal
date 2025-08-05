@@ -1,15 +1,12 @@
-from datetime import datetime
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import (Http404)
 from django.urls import reverse_lazy
-from django.views.generic import (ListView, DetailView, CreateView, UpdateView, DeleteView)
-from pyexpat.errors import messages
+from django.views.generic import (ListView, DetailView, UpdateView, DeleteView, CreateView)
 
-from .models import Post
 from .filters import PostFilter
 from .forms import PostForm
+from .models import Post
+
 
 class PostsList(ListView):
     model = Post
@@ -39,15 +36,24 @@ class PostDetail(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
 
-class PostCreate(CreateView):
+class PostCreate(CreateView, PermissionRequiredMixin):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
+    permission_required = 'news.add_post'
 
-class PostUpdate(LoginRequiredMixin, UpdateView):
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class PostUpdate(PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
+    permission_required = 'news.change_post'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(author=self.request.user)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -118,6 +124,3 @@ class ArticleUpdate(PostUpdate):
 
 class ArticleDelete(PostDelete):
     post_type = 'Статья'
-
-
-
