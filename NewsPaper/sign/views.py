@@ -1,18 +1,10 @@
-import sys
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.shortcuts import redirect
 from django.views.generic.edit import CreateView
+from news.models import Author
 
 from .models import BaseRegisterForm
-
-sys.path.append("..")
-import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
-import django
-django.setup()
-from ..news.models import Author
 
 
 class BaseRegisterView(CreateView):
