@@ -1,10 +1,10 @@
-from allauth.socialaccount.providers.mediawiki.provider import settings
 from django.core.mail import EmailMultiAlternatives
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 
-from .models import PostCategory
+from NewsPaper1 import settings
+from news.models import PostCategory
 
 
 def send_notifications(preview, pk, post_title, subscribers):

@@ -9,12 +9,7 @@ from django.urls import reverse
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь")
-    rating = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        verbose_name="Рейтинг"
-    )
-
+    rating = models.IntegerField(default=0,validators=[MinValueValidator(0)],verbose_name="Рейтинг")
     class Meta:
         verbose_name = "Автор"
         verbose_name_plural = "Авторы"
@@ -46,7 +41,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100,unique=True,verbose_name="Название категории")
-    subscribers = models.ManyToManyField(User, related_name='categories', blank=True)
+    subscribers = models.ManyToManyField(User, related_name='subscriptions', blank=True)
 
     class Meta:
         verbose_name = "Категория"
@@ -115,28 +110,11 @@ class PostCategory(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name="Публикация"
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name="Пользователь"
-    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', verbose_name="Публикация")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     text = models.TextField(verbose_name="Текст комментария")
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата создания"
-    )
-    rating = models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)],
-        verbose_name="Рейтинг"
-    )
-
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    rating = models.IntegerField(default=0, validators=[MinValueValidator(0)], verbose_name="Рейтинг")
     class Meta:
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
