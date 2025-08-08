@@ -1,8 +1,6 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, Group
-from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.auth.models import User
 from django.views.generic.edit import CreateView
-from news.models import Author
 
 from .models import BaseRegisterForm
 
@@ -13,14 +11,31 @@ class BaseRegisterView(CreateView):
     success_url = '/'
 
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+from django.shortcuts import redirect
+from news.models import Author  # Импортируем модель Author из вашего приложения
+
+
 @login_required
-def AddToAuthorsGroup(request):  # добавление пользователя в группу с правами автора
+def AddToAuthorsGroup(request):
+    # Проверяем, не состоит ли пользователь уже в группе
     if not request.user.groups.filter(name='authors').exists():
-        authors_group = Group.objects.get(name='authors')
-        user = request.user
-        authors_group.user_set.add(user)
+        try:
+            # Получаем группу авторов (или создаём, если не существует)
+            authors_group, created = Group.objects.get_or_create(name='authors')
 
-        # добавление пользователя как автора в модель Authors
+            # Добавляем пользователя в группу
+            authors_group.user_set.add(request.user)
 
-        Author.objects.create(user=request.user)
+            # Создаём запись в Author, если её ещё нет
+            if not hasattr(request.user, 'author'):
+                Author.objects.create(user=request.user)
+
+            # Можно добавить сообщение об успехе
+            messages.success(request, 'Вы успешно добавлены в группу авторов!')
+        except Exception as e:
+            # Обработка возможных ошибок
+            messages.error(request, f'Произошла ошибка: {str(e)}')
+
     return redirect('/')

@@ -46,13 +46,14 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100,unique=True,verbose_name="Название категории")
+    subscribers = models.ManyToManyField(User, related_name='categories', blank=True)
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
     def __str__(self):
-        return self.name.title()
+        return self.name
 
 
 class Post(models.Model):
@@ -151,5 +152,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.post.title[:20]}..."
-
-

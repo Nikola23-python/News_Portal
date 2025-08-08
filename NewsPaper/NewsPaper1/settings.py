@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v*eswa*k&eeg)j@z(&wkr+fem(ek0qrjhprw^2skyqx%=*$@q#'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -138,20 +142,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIR = [
     os.path.join(str(BASE_DIR.joinpath('static')),)
 ]
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 # добавки для рассылки почты
-EMAIL_HOST = 'smtp.yandex.ru'  # ажрес сервера яндекс почты
-EMAIL_PORT = 465  # ПОРТ smtp серврера
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'#
+EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = True  # ЯНДЕКС ИСПОЛЬЗУЕТ SSL, ПОЭТОМУ НУЖНО УСТАНАВЛИВАТЬ True
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # установка отправки уведомлений на почтовый сервер
-EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'  # установка отправки уведомлений на консоль
-
+EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
@@ -163,7 +164,7 @@ ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-# настройки для того, чтобы при регистарции пользователь
+
 # автоматически добавлялся в группу "common"
 ACCOUNT_FORMS = {'signup': 'sign.models.CommonSignupForm'}
 SOCIALACCOUNT_FORMS = {'signup': 'sign.models.SocialCommonSignupForm'}
@@ -183,11 +184,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 
-import sys
-sys.path.append(".")
 
-import os
-print (os.getcwd())
 
 SOCIALACCOUNT_PROVIDERS = {
     'yandex': {

@@ -1,11 +1,13 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import (Http404)
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy, reverse
 from django.views.generic import (ListView, DetailView, UpdateView, DeleteView, CreateView)
 
 from .filters import PostFilter
-from .forms import PostForm
-from .models import Post
+from .forms import PostForm, SubscriptionForm
+from .models import Post, Category
 
 
 class PostsList(ListView):
@@ -40,10 +42,16 @@ class PostCreate(CreateView, PermissionRequiredMixin):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
-    permission_required = 'news.add_post'
+    permission_required = ('news.add_post', )
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        post = form.save(commit=False)
+        post.author = self.request.user.author
+        if self.request.path == reverse('news_create'):
+            post.post_type = 'NW'
+        if self.request.path == reverse('article_create'):
+            post.post_type = 'AR'
+        post.save()
         return super().form_valid(form)
 
 class PostUpdate(PermissionRequiredMixin, UpdateView):
@@ -124,3 +132,39 @@ class ArticleUpdate(PostUpdate):
 
 class ArticleDelete(PostDelete):
     post_type = 'Статья'
+
+
+@login_required
+def subscribe(request, category_id=None):
+    if category_id:
+        category = get_object_or_404(Category, id=category_id)
+        category.subscribers.add(request.user)
+        return redirect('category_posts', category_id=category_id)
+
+    if request.method == 'POST':
+        form = SubscriptionForm(request.POST)
+        if form.is_valid():
+            request.user.subscriptions.set(form.cleaned_data['categories'])
+            return redirect('subscription_success')
+    else:
+        form = SubscriptionForm(initial={
+            'categories': request.user.subscriptions.all()
+        })
+
+    return render(request, 'sub/subscribe.html', {'form': form})
+
+@login_required
+def unsubscribe(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    category.subscribers.remove(request.user)  # Удаляем пользователя из подписчиков
+    return redirect('category_posts', category_id=category_id)
+
+@login_required
+def subscription_manage(request):
+    categories = Category.objects.all()
+    return render(request, 'sub/subscriptions.html', {
+        'categories': categories
+    })
+
+def subscription_success(request):
+    return render(request, 'sub/subscription_success.html')
