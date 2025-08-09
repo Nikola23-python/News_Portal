@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
-
+SITE_URL = ['http://127.0.0.1:8000']
 
 # Application definition
 
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django_filters',
     'news.apps.NewsConfig',
     'sign', 'protect',
+    "django_apscheduler",
 
     # добавки allauth
     'allauth', 'allauth.account',
@@ -197,3 +198,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {'access_type': 'online'}, # Тип доступа
     }
 }
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  
