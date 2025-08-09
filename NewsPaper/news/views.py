@@ -38,7 +38,7 @@ class PostDetail(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
 
-class PostCreate(CreateView, PermissionRequiredMixin):
+class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -73,7 +73,7 @@ class PostUpdate(PermissionRequiredMixin, UpdateView):
             raise Http404("Такой публикации не существует")
         return obj
 
-class PostDelete(DeleteView, LoginRequiredMixin):
+class PostDelete(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')

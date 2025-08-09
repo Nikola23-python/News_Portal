@@ -138,9 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIR = [
+STATICFILES_DIRS = [
     os.path.join(str(BASE_DIR.joinpath('static')),)
 ]
 
@@ -200,4 +200,4 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
-APSCHEDULER_RUN_NOW_TIMEOUT = 25  
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
